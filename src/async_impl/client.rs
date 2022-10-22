@@ -30,6 +30,8 @@ use super::response::Response;
 use super::Body;
 #[cfg(feature = "__chrome")]
 use crate::browser::{configure_chrome, ChromeVersion};
+#[cfg(feature = "__okhttp")]
+use crate::browser::configure_okhttp;
 use crate::connect::{Connector, HttpConnector};
 #[cfg(feature = "cookies")]
 use crate::cookie;
@@ -206,6 +208,12 @@ impl ClientBuilder {
     #[cfg(feature = "__chrome")]
     pub fn chrome_builder(self, ver: ChromeVersion) -> ClientBuilder {
         configure_chrome(ver, self)
+    }
+
+    /// Sets the necessary values to mimic Okhttp.
+    #[cfg(feature = "__okhttp")]
+    pub fn okhttp_builder(self) -> ClientBuilder {
+        configure_okhttp(self)
     }
     /// Returns a `Client` that uses this `ClientBuilder` configuration.
     ///
@@ -506,17 +514,8 @@ impl ClientBuilder {
         if let Some(http2_max_frame_size) = config.http2_max_frame_size {
             builder.http2_max_frame_size(http2_max_frame_size);
         }
-        if let Some(max) = config.http2_max_concurrent_streams {
-            builder.http2_max_concurrent_streams(max);
-        }
-        if let Some(max) = config.http2_max_header_list_size {
-            builder.http2_max_header_list_size(max);
-        }
         if let Some(opt) = config.http2_enable_push {
             builder.http2_enable_push(opt);
-        }
-        if let Some(max) = config.http2_header_table_size {
-            builder.http2_header_table_size(max);
         }
         if let Some(http2_keep_alive_interval) = config.http2_keep_alive_interval {
             builder.http2_keep_alive_interval(http2_keep_alive_interval);

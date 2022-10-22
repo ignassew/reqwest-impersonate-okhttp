@@ -96,6 +96,11 @@ impl ClientBuilder {
         self.with_inner(move |inner| inner.chrome_builder(ver))
     }
 
+    /// Sets the necessary values to mimic Okhttp.
+    pub fn okhttp_builder(self) -> ClientBuilder {
+        self.with_inner(move |inner| inner.okhttp_builder())
+    }
+
     /// Returns a `Client` that uses this `ClientBuilder` configuration.
     ///
     /// # Errors

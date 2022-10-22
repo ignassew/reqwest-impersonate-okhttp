@@ -41,7 +41,9 @@ boring-tls = ["__boring"]
 
 blocking = ["futures-util/io", "tokio/rt-multi-thread", "tokio/sync"]
 
-chrome = ["__chrome"]
+# chrome is disabled because it would not work with changes that I made to support okhttp.
+# chrome = ["__chrome"]
+okhttp = ["__okhttp"]
 
 cookies = ["cookie_crate", "cookie_store", "proc-macro-hack"]
 
@@ -77,10 +79,10 @@ __boring = [
     "hyper-boring",
     "__tls",
     "boring-sys",
-    "foreign-types",
 ]
 
 __chrome = ["__boring", "__browser_common"]
+__okhttp = ["__boring", "__browser_common"]
 
 __browser_common = ["brotli", "gzip"]
 
@@ -149,7 +151,6 @@ hyper-boring = { git = "https://github.com/4JX/boring", rev = "2a7463a", optiona
 boring = { git = "https://github.com/4JX/boring", rev = "2a7463a", optional = true }
 tokio-boring = { git = "https://github.com/4JX/boring", rev = "2a7463a", optional = true }
 boring-sys = { git = "https://github.com/4JX/boring", rev = "2a7463a", optional = true }
-foreign-types = { version = "0.5.0", optional = true }
 
 ## cookies
 cookie_crate = { version = "0.16", package = "cookie", optional = true }
@@ -282,5 +283,5 @@ path = "tests/multipart.rs"
 required-features = ["multipart"]
 
 [patch.crates-io]
-hyper = { git = "https://github.com/4JX/hyper.git", branch = "0.14.x-patched", ref = "bd25359" }
-h2 = { git = "https://github.com/4JX/h2.git", ref = "b088466" }
+hyper = { git = "https://github.com/ignassew/hyper.git", branch = "0.14.x", ref = "81bf1d1a5f1b08632ba8aeedf7e1ea579edd2f64" }
+h2 = { git = "https://github.com/ignassew/h2.git", ref = "a67ea104a1ff5d78323e455e485ffb7cc02000d8" }

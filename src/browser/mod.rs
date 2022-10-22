@@ -14,6 +14,12 @@ mod chrome;
 #[cfg(feature = "__chrome")]
 pub(crate) use chrome::configure_chrome;
 
+#[cfg(feature = "__okhttp")]
+mod okhttp;
+
+#[cfg(feature = "__okhttp")]
+pub(crate) use okhttp::configure_okhttp;
+
 struct BrowserSettings {
     pub tls_builder_func: Arc<dyn Fn() -> SslConnectorBuilder + Send + Sync>,
     pub http2: Http2Data,

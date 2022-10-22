@@ -1,7 +1,5 @@
 #[cfg(feature = "__boring")]
-use boring::ssl::{ConnectConfiguration, SslConnectorBuilder};
-#[cfg(feature = "__boring")]
-use foreign_types::ForeignTypeRef;
+use boring::ssl::SslConnectorBuilder;
 use futures_util::future::Either;
 #[cfg(feature = "__tls")]
 use http::header::HeaderValue;
@@ -195,22 +193,22 @@ enum Inner {
     },
 }
 
-#[cfg(feature = "__boring")]
-fn tls_add_application_settings(conf: &mut ConnectConfiguration) {
-    // curl-impersonate does not know how to set this up, neither do I. Hopefully nothing breaks with these values.
-
-    const ALPN_H2: &str = "h2";
-    const ALPN_H2_LENGTH: usize = 2;
-    unsafe {
-        boring_sys::SSL_add_application_settings(
-            conf.as_ptr(),
-            ALPN_H2.as_ptr(),
-            ALPN_H2_LENGTH,
-            std::ptr::null(),
-            0,
-        )
-    };
-}
+// #[cfg(feature = "__boring")]
+// fn tls_add_application_settings(conf: &mut ConnectConfiguration) {
+//     // curl-impersonate does not know how to set this up, neither do I. Hopefully nothing breaks with these values.
+//
+//     const ALPN_H2: &str = "h2";
+//     const ALPN_H2_LENGTH: usize = 2;
+//     unsafe {
+//         boring_sys::SSL_add_application_settings(
+//             conf.as_ptr(),
+//             ALPN_H2.as_ptr(),
+//             ALPN_H2_LENGTH,
+//             std::ptr::null(),
+//             0,
+//         )
+//     };
+// }
 
 impl Connector {
     #[cfg(not(feature = "__tls"))]
@@ -401,9 +399,9 @@ impl Connector {
                     let host = dst.host().ok_or("no host in url")?.to_string();
                     let conn = socks::connect(proxy, dst, dns).await?;
                     let tls_connector = tls().build();
-                    let mut conf = tls_connector.configure()?;
+                    let conf = tls_connector.configure()?;
 
-                    tls_add_application_settings(&mut conf);
+                    // tls_add_application_settings(&mut conf);
 
                     let io = tokio_boring::connect(conf, &host, conn).await?;
                     return Ok(Conn {
@@ -505,8 +503,8 @@ impl Connector {
 
                 let mut http = hyper_boring::HttpsConnector::with_connector(http, tls())?;
 
-                http.set_callback(|conf, _| {
-                    tls_add_application_settings(conf);
+                http.set_callback(|_, _| {
+                    // tls_add_application_settings(conf);
                     Ok(())
                 });
 
@@ -619,8 +617,8 @@ impl Connector {
                     let mut http =
                         hyper_boring::HttpsConnector::with_connector(http, tls_connector)?;
 
-                    http.set_callback(|conf, _| {
-                        tls_add_application_settings(conf);
+                    http.set_callback(|_, _| {
+                        // tls_add_application_settings(conf);
 
                         Ok(())
                     });
@@ -636,9 +634,9 @@ impl Connector {
                     )
                     .await?;
                     let tls_connector = tls().build();
-                    let mut conf = tls_connector.configure()?;
+                    let conf = tls_connector.configure()?;
 
-                    tls_add_application_settings(&mut conf);
+                    // tls_add_application_settings(&mut conf);
 
                     let io = tokio_boring::connect(conf, host.ok_or("no host in url")?, tunneled)
                         .await?;
